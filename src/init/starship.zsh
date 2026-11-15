@@ -19,7 +19,6 @@ else
     zmodload zsh/datetime
     zmodload zsh/mathfunc
     __starship_get_time() {
-        typeset -gi STARSHIP_CAPTURED_TIME
         (( STARSHIP_CAPTURED_TIME = int(rint(EPOCHREALTIME * 1000)) ))
     }
 fi
@@ -32,6 +31,7 @@ fi
 prompt_starship_precmd() {
     # Save the status, because subsequent commands in this function will change $?
     typeset -g STARSHIP_CMD_STATUS=$? STARSHIP_PIPE_STATUS=(${pipestatus[@]})
+    local -i STARSHIP_CAPTURED_TIME
 
     # Calculate duration if a command was executed
     if (( ${+STARSHIP_START_TIME} )); then
@@ -57,6 +57,7 @@ prompt_starship_precmd() {
 # Runs after the user submits the command line, but before it is executed and
 # only if there's an actual command to run
 prompt_starship_preexec() {
+    local -i STARSHIP_CAPTURED_TIME
     __starship_get_time && typeset -g STARSHIP_START_TIME=$STARSHIP_CAPTURED_TIME
 }
 
